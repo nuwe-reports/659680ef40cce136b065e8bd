@@ -257,9 +257,86 @@ class RoomControllerUnitTest{
     private ObjectMapper objectMapper;
 
     @Test
-    void this_is_a_test(){
-        // DELETE ME
-        assertThat(true).isEqualTo(false);
+    void shouldGetNoRooms() throws Exception{
+        List<Room> rooms = new ArrayList<Room>();
+        when(roomRepository.findAll()).thenReturn(rooms);
+        mockMvc.perform(get("/api/rooms"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldGetRooms() throws Exception{
+        Room room = new Room("Dermatology");
+        List<Room> rooms = new ArrayList<Room>();
+        rooms.add(room);
+        when(roomRepository.findAll()).thenReturn(rooms);
+        mockMvc.perform(get("/api/rooms"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldGetRoomByName() throws Exception{
+        Room room = new Room("Dermatology");
+
+        Optional<Room> opt = Optional.of(room);
+
+        assertThat(opt).isPresent();
+        assertThat(opt.get().getRoomName()).isEqualTo(room.getRoomName());
+        assertThat(room.getRoomName()).isEqualTo("Dermatology");
+
+        when(roomRepository.findByRoomName(room.getRoomName())).thenReturn(opt);
+        mockMvc.perform(get("/api/rooms/" + room.getRoomName()))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    void shouldNotGetRoomByName() throws Exception{
+        String roomName = "Dermatology";
+        mockMvc.perform(get("/api/rooms/" + roomName))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void shouldCreateRoom() throws Exception {
+        Room room = new Room("Dermatology");
+
+        mockMvc.perform(post("/api/room").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(room)))
+                .andExpect(status().isCreated());
+
+    }
+
+    @Test
+    void shouldDeleteRoom() throws Exception{
+        Room room = new Room("Dermatology");
+
+        Optional<Room> opt = Optional.of(room);
+
+        assertThat(opt).isPresent();
+        assertThat(opt.get().getRoomName()).isEqualTo(room.getRoomName());
+        assertThat(room.getRoomName()).isEqualTo("Dermatology");
+
+        when(roomRepository.findByRoomName(room.getRoomName())).thenReturn(opt);
+        mockMvc.perform(delete("/api/rooms/" + room.getRoomName()))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    void shouldNotDeleteRoom() throws Exception{
+        String roomName = "Dermatology";
+        mockMvc.perform(delete("/api/rooms/" + roomName))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void shouldDeleteAllRooms() throws Exception{
+        mockMvc.perform(delete("/api/rooms"))
+                .andExpect(status().isOk());
+
     }
 
 }
