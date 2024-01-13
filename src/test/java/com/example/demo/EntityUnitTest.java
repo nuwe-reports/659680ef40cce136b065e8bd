@@ -1,6 +1,8 @@
 package com.example.demo;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,9 +40,63 @@ class EntityUnitTest {
     private Appointment a3;
 
     @Test
-    void this_is_a_test(){
-        // DELETE THIS TEST
-        assertThat(false).isEqualTo(true);
+    void givenAPerson_whenChangingEmail_thenReturnNewEmail() {
+        Person person = new Person ("Perla", "Amalia", 24, "p.amalia@hospital.accwe");
+        person.setEmail("amalia@hospital.accwe");
+
+        assertEquals("amalia@hospital.accwe", person.getEmail());
+    }
+
+    @Test
+    void givenAPerson_whenChangingAge_thenReturnNewAge() {
+        Person person = new Person ("Perla", "Amalia", 24, "p.amalia@hospital.accwe");
+        person.setAge(25);
+
+        assertEquals(25, person.getAge());
+    }
+
+    @Test
+    void givenAPerson_whenChangingFirstName_thenReturnNewFirstName() {
+        Person person = new Person ("Perla", "Amalia", 24, "p.amalia@hospital.accwe");
+        person.setFirstName("Carmen");
+
+        assertEquals("Carmen", person.getFirstName());
+    }
+
+    @Test
+    void givenAPerson_whenChangingLastName_thenReturnNewLastName() {
+        Person person = new Person ("Perla", "Amalia", 24, "p.amalia@hospital.accwe");
+        person.setLastName("Patricia");
+
+        assertEquals("Patricia", person.getLastName());
+    }
+
+    @Test
+    void givenADoctor_whenSettingId_thenReturnNewId() {
+        Doctor doctor = new Doctor ("Perla", "Amalia", 24, "p.amalia@hospital.accwe");
+        doctor.setId(1);
+
+        assertEquals(1, doctor.getId());
+    }
+
+    @Test
+    void givenAPatient_whenSettingId_thenReturnNewId() {
+        Patient patient = new Patient ("Perla", "Amalia", 24, "p.amalia@hospital.accwe");
+        patient.setId(1);
+
+        assertEquals(1, patient.getId());
+    }
+
+    @Test
+    void givenARoom_whenGettingRoomName_thenReturnRoomName() {
+        Room room = new Room ("Dermatology");
+
+        assertEquals("Dermatology", room.getRoomName());
+    }
+
+    @Test
+    void givenTwoAppointments_whenOverlap_thenReturnFalse() {
+
     }
 
     /** TODO
