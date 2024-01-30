@@ -3,6 +3,8 @@ package com.example.demo.controllers;
 import com.example.demo.repositories.*;
 import com.example.demo.entities.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,11 +54,33 @@ public class AppointmentController {
 
     @PostMapping("/appointment")
     public ResponseEntity<List<Appointment>> createAppointment(@RequestBody Appointment appointment){
-        /** TODO 
-         * Implement this function, which acts as the POST /api/appointment endpoint.
-         * Make sure to check out the whole project. Specially the Appointment.java class
-         */
-        return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+        //Create patient with the information of the appointment
+        Patient p = new Patient(appointment.getPatient().getFirstName(), appointment.getPatient().getLastName(),
+                appointment.getPatient().getAge(), appointment.getPatient().getEmail());
+        //Create doctor with the information of the appointment
+        Doctor d = new Doctor(appointment.getDoctor().getFirstName(), appointment.getDoctor().getLastName(),
+                appointment.getDoctor().getAge(), appointment.getDoctor().getEmail());
+        //Create room with the information of the appointment
+        Room r = new Room(appointment.getRoom().getRoomName());
+
+        //starAt and FinishesAt cannot be the same
+        if(appointment.getStartsAt().equals(appointment.getFinishesAt())) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        //check availability of the room at the time of the appointment
+        List<Appointment> appointments = appointmentRepository.findAll();
+        System.out.println(appointments);
+        for(Appointment appointment1: appointments){
+            if((appointment.overlaps(appointment1) == true))
+            {                System.out.println(appointment1.getDoctor());
+                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+
+        Appointment a = new Appointment(p,d,r,appointment.getStartsAt(), appointment.getFinishesAt());
+
+        appointmentRepository.save(a);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
